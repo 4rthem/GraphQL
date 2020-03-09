@@ -8,6 +8,7 @@
 namespace Youshido\GraphQL\Execution;
 
 
+use Youshido\GraphQL\Exception\GraphQLException;
 use Youshido\GraphQL\Exception\ResolveException;
 use Youshido\GraphQL\Execution\Container\Container;
 use Youshido\GraphQL\Execution\Context\ExecutionContext;
@@ -112,14 +113,14 @@ class Processor
                   while ($deferredResolver = array_shift($this->deferredResultsLeaf)) {
                       $deferredResolver->resolve();
                   }
-              } catch (\Exception $e) {
+              } catch (GraphQLException $e) {
                   $this->executionContext->addError($e);
               } finally {
                   $this->data = static::unpackDeferredResults($this->data);
               }
             }
 
-        } catch (\Exception $e) {
+        } catch (GraphQLException $e) {
             $this->executionContext->addError($e);
         }
 
@@ -218,7 +219,7 @@ class Processor
                 default:
                     throw new ResolveException(sprintf('Resolving type with kind "%s" not supported', $kind));
             }
-        } catch (\Exception $e) {
+        } catch (GraphQLException $e) {
             $this->executionContext->addError($e);
 
             if ($fromObject) {
@@ -487,7 +488,7 @@ class Processor
                         default:
                             $value = null;
                     }
-                } catch (\Exception $e) {
+                } catch (GraphQLException $e) {
                     $this->executionContext->addError($e);
 
                     $value = null;
@@ -518,7 +519,7 @@ class Processor
 
             try {
                 return $this->collectResult($field, $type, $ast, $resolvedValue);
-            } catch (\Exception $e) {
+            } catch (GraphQLException $e) {
                 return null;
             }
         });
